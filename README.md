@@ -37,7 +37,7 @@ When no path is supplied, all data is retrieved by default. For example, to retr
 ```
 $ zkdump --server cgw:2320 --user SADMIN --password oracle 
 
-
+...
 ```
 
 To retrieve a certain node, such as the Gateway security profile, use a command such as:
@@ -55,7 +55,8 @@ $ zkdump --server cgw:2320 --user SADMIN --password oracle /Config/Profiles/Secu
 Pipe the output into `jq`, to retrieve only the Data element:
 
 ```
-$ zkdump --server localhost:2320 --user SADMIN --password oracle /Config/Profiles/Security/Gateway | jq -r '.Data'
+$ zkdump --server localhost:2320 --user SADMIN --password oracle /Config/Profiles/Security/Gateway \
+    | jq -r '.Data'
 
 ewogICAgIlByb2ZpbGUiOiB7CiAgICAgICAgIlByb2ZpbGVOYW1lIjogIkdhdGV3YXkiLAogICAgICAgICJBY2Nlc3NQZXJtaXNzaW9uIjogIlJlYWRPbmx5IgogICAgfSwKICAgICJTZWN1cml0eUNvbmZpZ1BhcmFtcyI6IHsKICAgICAgICAiRGF0YVNvdXJjZXMiOiBbewogICAgICAgICAgICAiTmFtZSI6ICJQREIxIiwKICAgICAgICAgICAgIlR5cGUiOiAiREIiLAogICAgICAgICAgICAiSG9zdCI6ICIxOTIuMTY4LjU2LjE2MCIsCiAgICAgICAgICAgICJQb3J0IjogMTUyMSwKICAgICAgICAgICAgIlNxbFN0eWxlIjogIk9yYWNsZSIsCiAgICAgICAgICAgICJFbmRwb2ludCI6ICJQREIxIiwKICAgICAgICAgICAgIlRhYmxlT3duZXIiOiAiU0lFQkVMIiwKICAgICAgICAgICAgIkhhc2hVc2VyUHdkIjogZmFsc2UsCiAgICAgICAgICAgICJIYXNoQWxnb3JpdGhtIjogIlNIQTEiLAogICAgICAgICAgICAiQ1JDIjogIiIsCiAgICAgICAgICAgICJfcHJldlR5cGUiOiAiIgogICAgICAgIH1dLAogICAgICAgICJTZWNBZHB0TmFtZSI6ICJEQlNlY0FkcHQiLAogICAgICAgICJTZWNBZHB0TW9kZSI6ICJEQiIsCiAgICAgICAgIk5TQWRtaW5Sb2xlIjogWyJTaWViZWwgQWRtaW5pc3RyYXRvciJdLAogICAgICAgICJUZXN0VXNlck5hbWUiOiAiIiwKICAgICAgICAiVGVzdFVzZXJQd2QiOiAiIiwKICAgICAgICAiREJTZWN1cml0eUFkYXB0ZXJEYXRhU291cmNlIjogIlBEQjEiLAogICAgICAgICJEQlNlY3VyaXR5QWRhcHRlclByb3BhZ2F0ZUNoYW5nZSI6IGZhbHNlLAogICAgICAgICJDZXJ0aWZpY2F0ZVJvb3QiOiAiXC9zaWViZWxcL2NvbmZpZ1wvdHJ1c3RzdG9yZS5qa3MiCiAgICB9Cn0=
 ```
@@ -63,7 +64,8 @@ ewogICAgIlByb2ZpbGUiOiB7CiAgICAgICAgIlByb2ZpbGVOYW1lIjogIkdhdGV3YXkiLAogICAgICAg
 Note that in this case, the node's data is Base64 encoded. It can easily be decoded piping the output into the `base64` utility:
 
 ```
-$ zkdump --server localhost:2320 --user SADMIN --password oracle /Config/Profiles/Security/Gateway | jq -r '.Data' | base64 -d
+$ zkdump --server localhost:2320 --user SADMIN --password oracle /Config/Profiles/Security/Gateway \
+    | jq -r '.Data' | base64 -d
 
 {
     "Profile": {
