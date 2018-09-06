@@ -19,7 +19,7 @@ var (
 	err       error
 	c         = &zk.Conn{}
 	app       = kingpin.New("zkdump", "A command-line utility to dump Zookeeper data.").Author("Dennis Waterham <dennis.waterham@oracle.com>").Version("1.0")
-	servers   = app.Flag("server", "Host name(s) and port(s) to connect to (host:port). Can be repeated.").Short('s').Strings()
+	servers   = app.Flag("server", "Host name and port to connect to (host:port)").Required().Short('s').Strings()
 	verbose   = app.Flag("verbose", "Print verbose.").Short('v').Bool()
 	user      = app.Flag("user", "Username to use for digest authentication.").Short('u').String()
 	password  = app.Flag("password", "Password to use for digest authentication (will read from TTY if not given).").Short('p').String()
@@ -54,13 +54,19 @@ func main() {
 
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 
-	c, _, err = zk.Connect(*servers, time.Second)
+	if *user != "" {
+		if *password == "" {
+			*password = readPassword()
+		}
+	}
+
+	c, _, err = zk.Connect(*servers, time.Second, zk.WithLogInfo(*verbose))
 	defer c.Close()
 	check(err)
 
 	if *user != "" {
 		verboseLog("Adding digest authentication for user %s", *user)
-		c.AddAuth("digest", getCredentials())
+		c.AddAuth("digest", []byte(*user+":"+*password))
 	}
 
 	verboseLog("Checking if root path %s exists", *rootpath)
@@ -98,21 +104,13 @@ func getZkNode(path, name string) *zkNode {
 	return zkNode
 }
 
-func getCredentials() []byte {
-	if *password == "" {
-		return append([]byte(*user+":"), readPassword()...)
-	} else {
-		return []byte(*user + ":" + *password)
-	}
-}
-
-func readPassword() []byte {
+func readPassword() string {
 	fmt.Print("Enter Password: ")
 	bytePassword, err := terminal.ReadPassword(int(syscall.Stdin))
 	check(err)
 
 	fmt.Printf("\n")
-	return bytePassword
+	return string(bytePassword)
 }
 
 func check(e error) {
